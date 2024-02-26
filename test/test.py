@@ -1,13 +1,9 @@
-# SPDX-FileCopyrightText: © 2023 Uri Shaked <uri@tinytapeout.com>
-# SPDX-License-Identifier: MIT
-
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles
-
+from cocotb.triggers import ClockCycles, RisingEdge
 
 @cocotb.test()
-async def test_loopback(dut):
+async def test_bit_shift(dut):
     dut._log.info("Start")
 
     clock = Clock(dut.clk, 10, units="us")
@@ -15,38 +11,15 @@ async def test_loopback(dut):
 
     # Reset
     dut._log.info("Reset")
-    dut.ena.value = 1
-
-    # ui_in[0] == 0: Copy bidirectional pins to outputs
-    dut.ui_in.value = 0b0
-    dut.uio_in.value = 0
-    dut.rst_n.value = 0
+    dut.r.value = 1  # Using 'r' to match Verilog reset signal
     await ClockCycles(dut.clk, 10)
-    dut.rst_n.value = 1
+    dut.r.value = 0
 
-    for i in range(256):
-        dut.uio_in.value = i
-        await ClockCycles(dut.clk, 1)
-        assert dut.uo_out.value == i
-
-
-@cocotb.test()
-async def test_counter(dut):
-    dut._log.info("Start")
-
-    clock = Clock(dut.clk, 10, units="us")
-    cocotb.start_soon(clock.start())
-
-    # ui_in[0] == 1: bidirectional outputs enabled, put a counter on both output and bidirectional pins
-    dut.ui_in.value = 0b1
-    dut.uio_in.value = 0
-    dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
-    dut.rst_n.value = 1
-    await ClockCycles(dut.clk, 2)
-
-    dut._log.info("Testing counter")
-    for i in range(256):
-        assert dut.uo_out.value == dut.uio_out.value
-        assert dut.uo_out.value == i
-        await ClockCycles(dut.clk, 1)
+    previous_value = 0b00000000
+    for i in range(1, 256):  # Test through multiple shift cycles
+        await RisingEdge(dut.clk)
+        current_value = int(dut.out.value)
+        expected_value = ((previous_value & 0x7f) << 1) | (~(previous_value >> 7) & 0x01)
+        assert current_value == expected_value, f"Failed at cycle {i}: {current_value:08b} != {expected_value:08b}"
+        previous_value = current_value
+        dut._log.info(f"Cycle {i}: out={current_value:08b}")
