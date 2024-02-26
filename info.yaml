@@ -1,27 +1,24 @@
-# Tiny Tapeout project information
 project:
-  title:        "TinyTapeout 06 Factory Test"      # Project title
-  author:       "Sylvain Munaut"      # Your name
-  discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "Factory test module"      # One line description of what your project does
-  language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+  title:        "TinyTapeout 06 Factory Test"
+  author:       "Sylvain Munaut"
+  discord:      ""
+  description:  "Factory test module implementing a bit-shift operation with a dynamic inversion"
+  language:     "Verilog"
+  clock_hz:     0       # Assuming the clock frequency is not specified in the provided context
 
-  # How many tiles your design occupies? A single tile is about 167x108 uM.
-  tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
+  # Assuming the design occupies a single tile based on the provided module's simplicity
+  tiles: "1x1"
 
-  # Your top module name must start with "tt_um_". Make it unique by including your github username:
   top_module:  "tt_um_factory_test"
   
-  # List your project's source files here. Source files must be in ./src and you must list each source file separately, one per line:
   source_files:        
     - "tt_um_factory_test.v"
 
-# The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
   # Inputs
-  ui[0]: "clk"
-  ui[1]: "r"
+  ui[0]: "clk"  # Clock input
+  ui[1]: "r"    # Reset input
+  # The rest of the ui pins are unused based on the provided module
   ui[2]: ""
   ui[3]: ""
   ui[4]: ""
@@ -29,17 +26,17 @@ pinout:
   ui[6]: ""
   ui[7]: ""
 
-  # Outputs
-  uo[0]: "out"
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  # Outputs - Only one output 'out' is used which is a bus of size 8 (0:size)
+  uo[0]: "out[0]"
+  uo[1]: "out[1]"
+  uo[2]: "out[2]"
+  uo[3]: "out[3]"
+  uo[4]: "out[4]"
+  uo[5]: "out[5]"
+  uo[6]: "out[6]"
+  uo[7]: "out[7]"
 
-  # Bidirectional pins
+  # No bidirectional pins are specified in the Verilog module, so they are left as is
   uio[0]: "data_i[0] / counter_o[0]"
   uio[1]: "data_i[1] / counter_o[1]"
   uio[2]: "data_i[2] / counter_o[2]"
@@ -49,5 +46,4 @@ pinout:
   uio[6]: "data_i[6] / counter_o[6]"
   uio[7]: "data_i[7] / counter_o[7]"
 
-# Do not change!
 yaml_version: 6
