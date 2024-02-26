@@ -8,7 +8,7 @@
 
 `default_nettype none
 
-module johnson (clk, r, out);
+module tt_um_factory_test (clk, r, out);
 
 parameter size=7;
 input clk;
